@@ -3,6 +3,7 @@ using IdentityMessageBoard.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 using System.Data;
 
 namespace IdentityMessageBoard.Controllers
@@ -69,6 +70,8 @@ namespace IdentityMessageBoard.Controllers
                     Content = content,
                     ExpirationDate = DateTime.UtcNow.AddDays(expiresIn)
                 });
+
+            Log.Information($"Message Created with contents of: {content} by user: {user}");
 
             _context.SaveChanges();
 
