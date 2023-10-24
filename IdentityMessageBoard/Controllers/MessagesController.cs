@@ -44,7 +44,7 @@ namespace IdentityMessageBoard.Controllers
                 }
                 else
                 {
-                    Log.Information($"Id: {message.Id} Message Expired");
+                    Log.Information($"I : {message.Id} Message Expired");
                     allMessages["expired"].Add(message);
                 }
             }
@@ -60,23 +60,29 @@ namespace IdentityMessageBoard.Controllers
 
         [HttpPost]
         [Authorize]
-        public IActionResult Create(string userId, string content, int expiresIn)
+        public IActionResult Create(MessageViewModel model)
         {
-            var user = _context.ApplicationUsers.Find(userId);
+            if (ModelState.IsValid)
+            {
+                var user = _context.ApplicationUsers.Find(User);
 
-            _context.Messages.Add(
-                new Message()
+                var message = new Message
                 {
                     Author = user,
-                    Content = content,
-                    ExpirationDate = DateTime.UtcNow.AddDays(expiresIn)
-                });
+                    Content = model.Content,
+                    ExpirationDate = model.GetExpirationDate()
+                };
 
-            Log.Information($"Message Created with contents of: {content} by user: {user}");
+                _context.Messages.Add(message);
 
-            _context.SaveChanges();
+                Log.Information($"Message Created with contents of: {model.Content} by user: {user}");
 
-            return RedirectToAction("Index");
+                _context.SaveChanges();
+
+                return RedirectToAction("Index");
+            }
+
+            return View(model);
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace IdentityMessageBoard.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace IdentityMessageBoard.Models
 {
     public class Message
     {
