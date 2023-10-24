@@ -44,6 +44,7 @@ namespace IdentityMessageBoard.Controllers
                 }
                 else
                 {
+                    Log.Information($"Id: {message.Id} Message Expired");
                     allMessages["expired"].Add(message);
                 }
             }
