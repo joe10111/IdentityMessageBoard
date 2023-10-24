@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using Serilog;
 
 namespace IdentityMessageBoard.Areas.Identity.Pages.Account
 {
@@ -27,7 +28,7 @@ namespace IdentityMessageBoard.Areas.Identity.Pages.Account
         public async Task<IActionResult> OnPost(string returnUrl = null)
         {
             await _signInManager.SignOutAsync();
-            _logger.LogInformation("User logged out.");
+            Log.Information("User logged out.");
             if (returnUrl != null)
             {
                 return LocalRedirect(returnUrl);
