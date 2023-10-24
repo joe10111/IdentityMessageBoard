@@ -1,4 +1,5 @@
 ﻿@model IEnumerable<Message>
+@using IdentityMessageBoard.Models
 
 <h2>Active Messages</h2>
 
@@ -7,6 +8,7 @@
 <table class="table mt-5">
     <thead>
         <tr>
+            <th scope="col">Author</th>
             <th scope="col">Content</th>
             <th scope="col">Expiration Date</th>
         </tr>
@@ -14,6 +16,7 @@
     @foreach (var message in Model)
     {
         <tr>
+            <td>@message.Author</td>
             <td>@message.Content</td>
             <td>@message.ExpirationDate.ToShortDateString()</td>
         </tr>

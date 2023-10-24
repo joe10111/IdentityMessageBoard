@@ -1,6 +1,8 @@
 ﻿using IdentityMessageBoard.DataAccess;
 using IdentityMessageBoard.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Data;
 
 namespace IdentityMessageBoard.Controllers
@@ -17,6 +19,7 @@ namespace IdentityMessageBoard.Controllers
         public IActionResult Index()
         {
             var messages = _context.Messages
+                .Include(m => m.Author)
                 .OrderBy(m => m.ExpirationDate)
                 .ToList()
                 .Where(m => m.IsActive()); // LINQ Where(), not EF Where()
@@ -54,11 +57,15 @@ namespace IdentityMessageBoard.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(int userId, string content, int expiresIn)
+        [Authorize]
+        public IActionResult Create(string userId, string content, int expiresIn)
         {
+            var user = _context.ApplicationUsers.Find(userId);
+
             _context.Messages.Add(
                 new Message()
                 {
+                    Author = user,
                     Content = content,
                     ExpirationDate = DateTime.UtcNow.AddDays(expiresIn)
                 });
