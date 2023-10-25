@@ -21,6 +21,7 @@ try
         options.UseNpgsql(builder.Configuration.GetConnectionString("IdentityMessageBoardDb")).UseSnakeCaseNamingConvention());
 
     builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+         .AddRoles<IdentityRole>()
         .AddEntityFrameworkStores<MessageBoardContext>();
 
     var app = builder.Build();

@@ -5,16 +5,30 @@
 <table class="table mt-5">
     <thead>
         <tr>
+            <th scope="col">Author</th>
             <th scope="col">Content</th>
             <th scope="col">Expiration Date</th>
         </tr>
     </thead>
     @foreach (var message in Model["active"])
     {
-        <tr>
-            <td>@message.Content</td>
-            <td>@message.ExpirationDate.ToShortDateString()</td>
-        </tr>
+@if (message.Author is null)
+        {
+            
+            <tr>
+                <td>Anonymous</td>
+                <td>@message.Content</td>
+                <td>@message.ExpirationDate.ToShortDateString()</td>
+            </tr>
+        }
+        else
+        {
+            <tr>
+                <td>@message.Author.Email</td>
+                <td>@message.Content</td>
+                <td>@message.ExpirationDate.ToShortDateString()</td>
+            </tr>
+        }
     }
 </table>
 
@@ -23,15 +37,29 @@
 <table class="table mt-5">
     <thead>
         <tr>
+            <th scope="col">Author</th>
             <th scope="col">Content</th>
             <th scope="col">Expiration Date</th>
         </tr>
     </thead>
     @foreach (var message in Model["expired"])
     {
-        <tr>
-            <td>@message.Content</td>
-            <td>@message.ExpirationDate.ToShortDateString()</td>
-        </tr>
+        @if (message.Author is null)
+        {
+
+            <tr>
+                <td>Anonymous</td>
+                <td>@message.Content</td>
+                <td>@message.ExpirationDate.ToShortDateString()</td>
+            </tr>
+        }
+        else
+        {
+            <tr>
+                <td>@message.Author.Email</td>
+                <td>@message.Content</td>
+                <td>@message.ExpirationDate.ToShortDateString()</td>
+            </tr>
+        }
     }
 </table>

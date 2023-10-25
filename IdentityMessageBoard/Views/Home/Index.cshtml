@@ -1,8 +1,20 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
+
+    bool isAdmin = User.IsInRole("Admin");
 }
 
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    @if (isAdmin)
+    {
+        <h2>Hello Admin!</h2>
+        <form asp-controller="SuperUser" asp-action="AssignSuperUserRole" method="post">
+            <div class="form-group">
+                <label for="userId">User ID:</label>
+                <input type="text" id="userId" name="userId" class="form-control" />
+            </div>
+            <button type="submit" class="btn btn-primary">Assign Super User Role</button>
+        </form>
+    }
 </div>
