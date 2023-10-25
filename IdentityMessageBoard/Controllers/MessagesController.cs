@@ -1,6 +1,9 @@
 ﻿using IdentityMessageBoard.DataAccess;
 using IdentityMessageBoard.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Serilog;
 using System.Data;
 
 namespace IdentityMessageBoard.Controllers
@@ -17,6 +20,7 @@ namespace IdentityMessageBoard.Controllers
         public IActionResult Index()
         {
             var messages = _context.Messages
+                .Include(m => m.Author)
                 .OrderBy(m => m.ExpirationDate)
                 .ToList()
                 .Where(m => m.IsActive()); // LINQ Where(), not EF Where()
@@ -40,6 +44,7 @@ namespace IdentityMessageBoard.Controllers
                 }
                 else
                 {
+                    Log.Information($"I : {message.Id} Message Expired");
                     allMessages["expired"].Add(message);
                 }
             }
@@ -54,18 +59,30 @@ namespace IdentityMessageBoard.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(int userId, string content, int expiresIn)
+        [Authorize]
+        public IActionResult Create(MessageViewModel model)
         {
-            _context.Messages.Add(
-                new Message()
+            if (ModelState.IsValid)
+            {
+                var user = _context.ApplicationUsers.Find(User);
+
+                var message = new Message
                 {
-                    Content = content,
-                    ExpirationDate = DateTime.UtcNow.AddDays(expiresIn)
-                });
+                    Author = user,
+                    Content = model.Content,
+                    ExpirationDate = model.GetExpirationDate()
+                };
 
-            _context.SaveChanges();
+                _context.Messages.Add(message);
 
-            return RedirectToAction("Index");
+                Log.Information($"Message Created with contents of: {model.Content} by user: {user}");
+
+                _context.SaveChanges();
+
+                return RedirectToAction("Index");
+            }
+
+            return View(model);
         }
     }
 }
